@@ -27,6 +27,12 @@ tag_push() {
     local source=$2
     docker tag ${source} ${target}
     docker push ${target}
+
+    if [ $? -eq 0 ]; then
+        echo "CICO: Image ${target} pushed, ready to update deployed app"
+    else
+        echo "ERROR OCCURED WHILE PUSHING THE IMAGE"
+    fi
 }
 
 push_image() {
@@ -37,13 +43,13 @@ push_image() {
     image_name=$(make get-image-name)
     image_repository=$(make get-image-repository)
     short_commit=$(git rev-parse --short=7 HEAD)
-    push_registry="push.registry.devshift.net"
+    #push_registry="push.registry.devshift.net"
     # Only for testing
-    push_registry="hub.docker.com"
+    push_registry="docker.io"
 
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
-        docker login -u ${DEVSHIFT_USERNAME} -p ${DEVSHIFT_PASSWORD} ${push_registry}
+        docker login -u ${DEVSHIFT_USERNAME} -p ${DEVSHIFT_PASSWORD} # ${push_registry}
     else
         echo "Could not login, missing credentials for the registry"
         exit 1
@@ -59,8 +65,6 @@ push_image() {
         tag_push ${push_registry}/${image_repository}:latest ${image_name}
         tag_push ${push_registry}/${image_repository}:${short_commit} ${image_name}
     fi
-
-    echo 'CICO: Image pushed, ready to update deployed app'
 }
 
 load_jenkins_vars
