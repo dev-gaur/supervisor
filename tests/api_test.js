@@ -34,6 +34,17 @@ describe("Test data collection api", function() {
 		})
 	})
 
+	describe("GET to /", () => {
+		it("should return 200", function(done){
+			chai.request(server)
+				.get("/")
+				.end(function(err, res) {
+					res.should.have.status(200)
+					done()
+				})
+		})
+	})
+
 })
 
 describe("Test readiness and liveness api",function(){

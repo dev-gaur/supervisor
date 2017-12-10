@@ -22,6 +22,11 @@ var appRouter = function(app) {
 		res.status(200);
 		res.end();
 	})
+
+	app.get("/", function(req , res){
+		res.send("Welcome to Supervisor!")
+	})
+
 }
 
 module.exports = appRouter
